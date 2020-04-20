@@ -3,6 +3,7 @@
 #include <endpointvolume.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <strsafe.h>
+#include <psapi.h>
 #include "VolumeRaiserPlus.h"
 
 int main()
@@ -82,7 +83,7 @@ Exit:
 // 
 bool PrintDeviceName(IMMDevice* device)
 {
-    LPWSTR deviceId;
+    PWSTR deviceId;
     HRESULT hr;
     bool success = false;
 
@@ -217,16 +218,8 @@ bool ManipulateSessions(IAudioSessionEnumerator* enumerator)
             goto Exit;
         }
 
-        // Get and print session name
-        LPWSTR sessionName;
-        hr = sessionControl->GetDisplayName(&sessionName);
-        if (FAILED(hr))
-        {
-            printf("Unable to get session display name: %x\n", hr);
+        if (!PrintSessionName(sessionControl))
             goto Exit;
-        }
-        printf("Name: %S\n", sessionName);
-        CoTaskMemFree(sessionName);
 
         // Get and print session state
         AudioSessionState state;
@@ -272,5 +265,64 @@ bool ManipulateSessions(IAudioSessionEnumerator* enumerator)
 Exit:
     SafeRelease(&sessionControl);
     SafeRelease(&sessionSimpleVolume);
+    return success;
+}
+
+bool PrintSessionName(IAudioSessionControl* sessionControl)
+{
+    HRESULT hr;
+    IAudioSessionControl2* sessionControl2 = NULL;
+    HANDLE process = NULL;
+    bool success = false;
+
+    // Get the session display name
+    PWSTR sessionName;
+    hr = sessionControl->GetDisplayName(&sessionName);
+    if (FAILED(hr))
+    {
+        printf("Unable to get session display name: %x\n", hr);
+        goto Exit;
+    }
+
+    // Print the session name
+    if (*sessionName != NULL)
+    {
+        printf("Name: %S\n", sessionName);
+    }
+    else // Or if null, the process name
+    {
+        hr = sessionControl->QueryInterface(__uuidof(IAudioSessionControl2), (void**)&sessionControl2);
+        if (FAILED(hr))
+        {
+            printf("Unable to get session control 2 interface: %x\n", hr);
+            goto Exit;
+        }
+
+        DWORD processId;
+        hr = sessionControl2->GetProcessId(&processId);
+        if (FAILED(hr))
+        {
+            printf("Unable to get session process ID: %x\n", hr);
+            goto Exit;
+        }
+
+        process = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processId);
+        if (process == NULL)
+        {
+            printf("Unable to get process handle: %u\n", GetLastError());
+            goto Exit;
+        }
+
+        wchar_t processName[128] = L"Unknown";
+        GetModuleBaseName(process, NULL, processName, 128);
+
+        printf("Name: %S\n", processName);
+    }
+
+    success = true;
+Exit:
+    CoTaskMemFree(sessionName);
+    SafeRelease(&sessionControl2);
+    CloseHandle(process);
     return success;
 }

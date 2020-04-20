@@ -8,6 +8,7 @@ bool PrintDeviceName(IMMDevice* device);
 bool PrintEndpointVolume(IMMDevice* device);
 bool GetAudioSessionEnumerator(IMMDevice* device, IAudioSessionEnumerator** sessionEnumerator);
 bool ManipulateSessions(IAudioSessionEnumerator* enumerator);
+bool PrintSessionName(IAudioSessionControl* sessionControl);
 
 template <class T> void SafeRelease(T** ppT)
 {
