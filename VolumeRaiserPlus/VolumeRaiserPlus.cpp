@@ -3,7 +3,6 @@
 #include <endpointvolume.h>
 #include <functiondiscoverykeys_devpkey.h>
 #include <strsafe.h>
-#include <psapi.h>
 #include "VolumeRaiserPlus.h"
 
 int main()
@@ -36,7 +35,7 @@ int main()
     if (!GetAudioSessionEnumerator(device, &sessionEnumerator))
         goto Exit;
 
-    printf("\Manipulating audio sessions...\n");
+    printf("\nManipulating audio sessions...\n");
     ManipulateSessions(sessionEnumerator);
     printf("\nVolumes Reset!");
 
@@ -268,6 +267,10 @@ Exit:
     return success;
 }
 
+// 
+// Prints the DisplayName of an audio session
+// If no display name is present, this will instead print the name of the process controlling the session
+// 
 bool PrintSessionName(IAudioSessionControl* sessionControl)
 {
     HRESULT hr;
@@ -314,7 +317,8 @@ bool PrintSessionName(IAudioSessionControl* sessionControl)
         }
 
         wchar_t processName[128] = L"Unknown";
-        GetModuleBaseName(process, NULL, processName, 128);
+        DWORD bufferSize = 128;
+        QueryFullProcessImageName(process, 0, processName, &bufferSize);
 
         printf("Name: %S\n", processName);
     }
