@@ -19,7 +19,6 @@ namespace VolumeRaiser
 
                 foreach (AudioSessionControl sessionControl in sessionEnumerator)
                 {
-                    //Console.WriteLine("Name: " + sessionControl.DisplayName);
                     PrintSessionName(sessionControl);
                     Console.WriteLine("\t- State: " + sessionControl.SessionState.ToString());
 

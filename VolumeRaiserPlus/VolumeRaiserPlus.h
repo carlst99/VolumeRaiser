@@ -1,5 +1,8 @@
 #pragma once
 
+#include <mmdeviceapi.h>
+#include <audiopolicy.h>
+
 const char* FRIENDLY_AUDIO_SESSION_STATES[] = { "Inactive", "Active", "Expired" };
 
 int main();
