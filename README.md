@@ -3,7 +3,7 @@ Raises the relative volume of all audio sessions to 100%. In other words, sets t
 
 **Foreword**
 
-My computer has an extremely annoying habit of randomly dropping the volume of inactive audio sessions to one. Yes, 1%. I still haven't found the cause except for that it's correlated with audio ducking, so VolumeRaiser is my slap-on solution. It works a treat if I run it once at startup and every time I leave an audio call.
+My computer has an extremely annoying habit of randomly dropping the volume of inactive audio sessions to one. Yes, 1%. I still haven't found the cause except for that it's correlated with audio ducking, so VolumeRaiser is my slap-on solution. It works a treat if I run it once at startup and every five minutes thereafter.
 
 **Why two projects?**
 
