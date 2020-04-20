@@ -1,12 +1,13 @@
 #pragma once
 
-#include <mmdeviceapi.h>
-
 const char* FRIENDLY_AUDIO_SESSION_STATES[] = { "Inactive", "Active", "Expired" };
 
 int main();
-LPWSTR GetDeviceName(IMMDevice* device);
-void GetSessions(IAudioSessionEnumerator* enumerator);
+bool GetDefaultDevice(IMMDevice** device);
+bool PrintDeviceName(IMMDevice* device);
+bool PrintEndpointVolume(IMMDevice* device);
+bool GetAudioSessionEnumerator(IMMDevice* device, IAudioSessionEnumerator** sessionEnumerator);
+bool ManipulateSessions(IAudioSessionEnumerator* enumerator);
 
 template <class T> void SafeRelease(T** ppT)
 {
